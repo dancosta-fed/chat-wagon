@@ -20,11 +20,38 @@ const firestore = firebase.Firestore();
 
 class App extends React.Component {
   render() {
+    const [user] = useAuthState(auth);
     return (
-      <div>Hello World</div>,
-      <div>This is me trying it again</div>
+      <div className="app">
+        <header>
+
+        </header>
+
+        <section>
+          { user ? <chatRoom/> : <signIn /> }
+        </section>
+
+      </div>
     )
   }
+}
+
+function SignIn() {
+  const SignInWithGoogle = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider);
+
+    return(
+      <button onClick={SignInWithGoogle}>Sign in</button>
+    )
+  }
+}
+
+function SignOut() {
+  return auth.currentUser && (
+    <button onClick={ () => auth.SignOut }>Sign in</button>
+  )
+  
 }
 
 export default App
