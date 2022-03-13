@@ -2,8 +2,11 @@ import React from "react";
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
+import { useCollection } from 'react-firebase-hooks/firestore';
 import { useAuthState } from 'react-firebase-hooks-auth';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+
+
+
 
 firebase.initializeApp ({
   apiKey: "AIzaSyDvNHhvlL6y-ZQx84tRq_hvWr8eu-hK7lE",
@@ -28,7 +31,7 @@ class App extends React.Component {
         </header>
 
         <section>
-          { user ? <chatRoom/> : <signIn /> }
+          { user ? <ChatRoom/> : <SignIn /> }
         </section>
 
       </div>
@@ -50,8 +53,26 @@ function SignIn() {
 function SignOut() {
   return auth.currentUser && (
     <button onClick={ () => auth.SignOut }>Sign in</button>
+  ) 
+}
+
+function ChatRoom() {
+  const messagesRef = firestore.collection('messages');
+  const query = messagesRef.orderBy('createdAt').limit(25);
+  const[messages] = useCollection(query, {idField: 'id'});
+
+  return(
+    <div>
+      {messages && messages.map( msg => <ChatMessage key={msg.id} message={msg}/>)}
+    </div>
   )
-  
+}
+
+function ChatMessage(props) {
+  const { text, uid, photoURL } = props.message;
+
+  return <p>{text}</p>
+ 
 }
 
 export default App
